@@ -1,5 +1,4 @@
 evaluation-scikit-learn
-python  ./executor.py/executor.pl Teacher --profile ${shieldd} --input Csv:${path_out}/db_teach.csv --opt model_name=Test1 --opt constants=const.json
 
-#python  /.executor.pl --type Teacher --profile model1 --input db_teach.csv --opt model_name=Test1 --opt config=config.ini
-python  /.executor.pl --type Teacher --profile model1 --input db_teach.csv --model_name Test1 --config config.ini
+python executor.py --type Teacher --input datasets/db_teach.csv --algorithm_name adaboost --model_name models/ada_model --algorithm_config configs/config-adaboost.ini
+python executor.py --type Tester  --input datasets/db_test.csv  --algorithm_name adaboost --model_name models/ada_model 
