@@ -25,7 +25,10 @@ python executor.py --type TesterOrder  --input db_test1a.csv --algorithm_name ad
 """
 
 if args.type not in ['Teacher', 'Tester', 'TesterOrder']:
-    raise BaseException("Option 'type' is requared. It must be choose from Teacher, Tester or TesterOrder.\n" + message)
+    raise BaseException("Option 'type' is requared. It must be choosen from 'Teacher', 'Tester' or 'TesterOrder'.\n" + message)
+
+if args.type == "Teacher" and args.algorithm_name not in ['adaboost', 'xgboost', 'gausnb']:
+    raise BaseException("Option 'type' is requared. It must be choosen from 'adaboost', 'xgboost', 'gausnb'].\n" + message)
 
 if not args.input:
     raise BaseException("Option 'input' is requared.\n" + message)

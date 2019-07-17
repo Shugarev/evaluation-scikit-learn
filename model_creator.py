@@ -2,6 +2,7 @@ import  pandas as pd
 from sklearn.ensemble import AdaBoostClassifier
 import xgboost as xgb
 from sklearn.externals import joblib
+from sklearn.naive_bayes import GaussianNB
 
 from dataset_preprocessing import replace_na, get_sample_weight, save_feature_importances,get_xgb_weight
 
@@ -13,6 +14,8 @@ class ModelCreator:
             self.create_adaboost_model(teach, params, model_path)
         elif algorithm_name.lower() == 'xgboost':
             self.create_xgboost_model(teach, params, model_path)
+        elif algorithm_name.lower() == 'gausnb':
+            self.create_gaussian_naive_bayes_model(teach, params, model_path)
 
     def create_adaboost_model(self, teach, config, model_path):
         teach = teach.apply(pd.to_numeric, errors="coerce")
@@ -43,3 +46,15 @@ class ModelCreator:
         booster.save_model(model_path)
         save_feature_importances(teach, drop_columns, model.feature_importances_,
                                  model_path.split('.')[0] + '-feature.csv')
+
+    def create_gaussian_naive_bayes_model(self, teach, config, model_path):
+        teach = teach.apply(pd.to_numeric, errors="coerce")
+        label = teach.status
+        drop_columns = ['status']
+        train = teach.drop(drop_columns, axis=1, errors="ignore")
+        train = replace_na(train)
+        train = train.as_matrix()
+        model = GaussianNB()
+        model.fit(train, label)
+        joblib.dump(model, model_path)
+        #save_feature_importances(teach, drop_columns, model.feature_importances_, model_path.split('.')[0] + '-feature.csv')

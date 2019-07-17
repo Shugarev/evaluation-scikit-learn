@@ -3,18 +3,19 @@ import os.path
 from sklearn.externals import joblib
 from analyzer_result import get_df_prediction
 from dataset_preprocessing import replace_na
-# from executor import BASE_DIR
 import xgboost as xgb
 from xgboost import Booster
+
 
 class DatasetTester:
 
     def test_dataset(self, test_path, model_path, output_path, algorithm_name, analyzer_path, type):
         test = pd.read_csv(test_path, dtype=str)
-        if algorithm_name.lower() == 'adaboost':
-            test = self.test_adaboost_dataset(test, model_path, output_path)
+        if algorithm_name.lower() in  ['adaboost', 'gausnb']:
+            test = self.scikit_test_dataset(test, model_path, output_path)
         elif algorithm_name.lower() == 'xgboost':
             test = self.test_xgboost_dataset(test, model_path, output_path)
+
         if type == 'Tester':
             description = model_path.split('/')[-1]
             df_statistic = get_df_prediction(test, description=description)
@@ -30,14 +31,12 @@ class DatasetTester:
         else:
             self.show_one_order(test)
 
-    def test_adaboost_dataset(self, test, model_path, output_path):
+    def scikit_test_dataset(self, test, model_path, output_path):
         test = test.apply(pd.to_numeric, errors="coerce")
         drop_columns = ['status']
         test1 = test.drop(drop_columns, axis=1, errors="ignore")
-
         test1 = replace_na(test1)
         test1 = test1.values
-
         loaded_model = joblib.load(model_path)
         test_pred = loaded_model.predict_proba(test1)
         test["probability"] = test_pred[:, 1]
