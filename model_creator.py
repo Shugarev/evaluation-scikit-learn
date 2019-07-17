@@ -1,8 +1,8 @@
-import numpy as np
 import  pandas as pd
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.externals import joblib
 
+from dataset_preprocessing import replace_na, get_sample_weight, save_feature_importances
 
 class ModelCreator:
 
@@ -14,28 +14,14 @@ class ModelCreator:
     def create_adaboost_model(self, teach, config, model_name):
         teach = teach.apply(pd.to_numeric, errors="coerce")
         label = teach.status
-
-        # подсчет sample weight
-        n_sample = teach.shape[0]
-        n_bad = teach[teach.status == 1].shape[0]
-        weight_bad = min(int(n_sample / n_bad), 99)
-        n = n_bad * weight_bad + n_sample - n_bad
-        weight = np.where(teach.status == 1, weight_bad/n, 1/n)
-
         drop_columns = ['status']
         train = teach.drop(drop_columns, axis=1, errors="ignore")
-        # замена na на -9999
-        train = train.fillna(-9999)
-        train = train.values
-
+        train = replace_na(train)
+        train = train.values  # Some algorithms may need to pass matrices. Example train = train.as_matrix()
         if not config:
             config = {}
         model = AdaBoostClassifier(**config)
-        # model = AdaBoostClassifier(n_estimators=40, learning_rate=0.6)
-        model.fit(train, label, sample_weight=weight)#, sample_weight=weight
+        sample_weight = get_sample_weight(teach)
+        model.fit(train, label)#, sample_weight=sample_weight
         joblib.dump(model, model_name)
-        importances = pd.DataFrame({"feature_name": teach.drop(drop_columns, axis=1, errors="ignore").columns,
-                                    "importances": model.feature_importances_})
-        importances.sort_values(by=["importances"], ascending=False, inplace=True)
-        feature_path = model_name.split('.')[0] + '-feature.csv'
-        importances.to_csv(feature_path, index=False, quoting=1)
+        save_feature_importances(teach, drop_columns, model.feature_importances_, model_name.split('.')[0] + '-feature.csv')
