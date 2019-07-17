@@ -11,7 +11,7 @@ class DatasetTester:
 
     def test_dataset(self, test_path, model_path, output_path, algorithm_name, analyzer_path, type):
         test = pd.read_csv(test_path, dtype=str)
-        if algorithm_name.lower() in  ['adaboost', 'gausnb']:
+        if algorithm_name.lower() in  ['adaboost', 'gausnb', 'decisiontree', 'gradientboost']:
             test = self.scikit_test_dataset(test, model_path, output_path)
         elif algorithm_name.lower() == 'xgboost':
             test = self.test_xgboost_dataset(test, model_path, output_path)

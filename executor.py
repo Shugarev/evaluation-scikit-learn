@@ -27,8 +27,8 @@ python executor.py --type TesterOrder  --input db_test1a.csv --algorithm_name ad
 if args.type not in ['Teacher', 'Tester', 'TesterOrder']:
     raise BaseException("Option 'type' is requared. It must be choosen from 'Teacher', 'Tester' or 'TesterOrder'.\n" + message)
 
-if args.type == "Teacher" and args.algorithm_name not in ['adaboost', 'xgboost', 'gausnb']:
-    raise BaseException("Option 'type' is requared. It must be choosen from 'adaboost', 'xgboost', 'gausnb'].\n" + message)
+if args.type == "Teacher" and args.algorithm_name not in ['adaboost', 'xgboost', 'gausnb', 'decisiontree', 'gradientboost']:
+    raise BaseException("Option 'type' is requared. It must be choosen from 'adaboost', 'xgboost', 'gausnb', 'decisiontree', 'gradientboost'.\n" + message)
 
 if not args.input:
     raise BaseException("Option 'input' is requared.\n" + message)
@@ -48,7 +48,7 @@ if type == 'Teacher':
         config_path = BASE_DIR + '/configs/' + args.algorithm_config
         config = configparser.ConfigParser()
         config.sections()
-        config.read(args.algorithm_config)
+        config.read(config_path)
         algorithm_params = {
             key: float(config["DEFAULT"][key]) if "." in config["DEFAULT"][key] else int(config["DEFAULT"][key])
             for key in config["DEFAULT"]}
