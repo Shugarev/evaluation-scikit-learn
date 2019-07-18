@@ -49,8 +49,9 @@ if type == 'Teacher':
         config = configparser.ConfigParser()
         config.sections()
         config.read(config_path)
-        algorithm_params = {k: float(v) if "." in v else int(v) for k,v in config["NUMERIC_PARAMS"].items()}
-        if config["STRING_PARAMS"]:
+        if "NUMERIC_PARAMS" in config.sections():
+            algorithm_params = {k: float(v) if "." in v else int(v) for k,v in config["NUMERIC_PARAMS"].items()}
+        if "STRING_PARAMS" in config.sections():
             algorithm_params = {**algorithm_params, **config["STRING_PARAMS"]}
     model_creator = ModelCreator()
     model_creator.create_model(args.algorithm_name, input_path, algorithm_params, model_path)
@@ -64,3 +65,27 @@ if type == 'Tester' or type == 'TesterOrder':
     if type == 'TesterOrder' and args.threshold:
         dataset_tester.threshold = args.threshold
     dataset_tester.test_dataset(input_path, model_path, output_path, args.algorithm_name, analyzer_path, type)
+
+#TODO подбор параметров для алгоритма
+if type == 'selection_parameters':
+    model_creator = ModelCreator()
+    model_creator.find_best_params(args.algorithm_name, input_path, algorithm_params, model_path)
+    parameters = {
+        'n_estimators': [60, 50, 80],
+        'learning_rate': [0.7, 0.2, 1.0]
+    }
+    for n in parameters.get('n_estimators'):
+        for l in  parameters.get('learning_rate'):
+            algorithm_params = {'n_estimators':n, 'learning_rate':l, 'random_state':123}
+            input_path= '/home/sergey/PycharmProjects/evaluation-scikit-learn/datasets/db_teach.csv'
+            model_creator = ModelCreator()
+            model_creator.create_model(args.algorithm_name, input_path, algorithm_params, model_path)
+
+            output_path = BASE_DIR + '/results/ada.csv'
+            analyzer_path = output_path.split('.')[0] + "-analyzer.csv"
+            type = 'Tester'
+            input_path='/home/sergey/PycharmProjects/evaluation-scikit-learn/datasets/db_test.csv'
+            dataset_tester = DatasetTester()
+            dataset_tester.test_dataset(input_path, model_path, output_path, args.algorithm_name, analyzer_path, type)
+            print ('n= ', n, 'l= ', l)
+            type = 'Teacher'

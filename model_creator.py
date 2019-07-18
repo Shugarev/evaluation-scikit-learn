@@ -3,6 +3,7 @@ from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn import tree
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
 from sklearn.externals import joblib
 import xgboost as xgb
 from dataset_preprocessing import replace_na, get_sample_weight, save_feature_importances,get_xgb_weight
@@ -62,3 +63,22 @@ class ModelCreator:
             return GradientBoostingClassifier(**config)
         elif algorithm_name == 'logregression':
             return LogisticRegression(**config)
+
+# TODO подбор параметро для алгоритма
+    def find_best_params(self, teach_path, params, model_path, algorithm_name):
+        teach = pd.read_csv(teach_path, dtype=str)
+        if algorithm_name == 'adaboost':
+            teach = teach.apply(pd.to_numeric, errors="coerce")
+            label = teach.status
+            drop_columns = ['status']
+            train = teach.drop(drop_columns, axis=1, errors="ignore")
+            train = replace_na(train)
+            train = train.as_matrix()
+            parameters = {
+                'n_estimators':[60, 50, 80],
+                'learning_rate':[0.7, 0.2, 1.0]
+            }
+            model = self.get_model(params, algorithm_name)
+            model = GridSearchCV(model, parameters)
+            model = model.fit(train, label)
+            print(sorted(model.cv_results_.keys()))
