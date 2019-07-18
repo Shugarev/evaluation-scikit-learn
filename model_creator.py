@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn import tree
+from sklearn.linear_model import LogisticRegression
 from sklearn.externals import joblib
 import xgboost as xgb
 from dataset_preprocessing import replace_na, get_sample_weight, save_feature_importances,get_xgb_weight
@@ -22,7 +23,7 @@ class ModelCreator:
             train = replace_na(train)
             train = train.as_matrix()
             model = self.get_model(params, algorithm_name)
-            if algorithm_name == 'adaboost  1':
+            if algorithm_name == 'adaboost':
                 weight = get_sample_weight(teach)
                 model.fit(train, label, sample_weight=weight)
             else:
@@ -59,3 +60,5 @@ class ModelCreator:
             return tree.DecisionTreeClassifier()
         elif algorithm_name == 'gradientboost':
             return GradientBoostingClassifier(**config)
+        elif algorithm_name == 'logregression':
+            return LogisticRegression(**config)

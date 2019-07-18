@@ -27,8 +27,8 @@ python executor.py --type TesterOrder  --input db_test1a.csv --algorithm_name ad
 if args.type not in ['Teacher', 'Tester', 'TesterOrder']:
     raise BaseException("Option 'type' is requared. It must be choosen from 'Teacher', 'Tester' or 'TesterOrder'.\n" + message)
 
-if args.type == "Teacher" and args.algorithm_name not in ['adaboost', 'xgboost', 'gausnb', 'decisiontree', 'gradientboost']:
-    raise BaseException("Option 'type' is requared. It must be choosen from 'adaboost', 'xgboost', 'gausnb', 'decisiontree', 'gradientboost'.\n" + message)
+if args.type == "Teacher" and args.algorithm_name not in ['adaboost', 'xgboost', 'gausnb', 'decisiontree', 'gradientboost', 'logregression']:
+    raise BaseException("Option 'type' is requared. It must be choosen from 'adaboost', 'xgboost', 'gausnb', 'decisiontree', 'gradientboost', 'logregression'.\n" + message)
 
 if not args.input:
     raise BaseException("Option 'input' is requared.\n" + message)
@@ -49,9 +49,9 @@ if type == 'Teacher':
         config = configparser.ConfigParser()
         config.sections()
         config.read(config_path)
-        algorithm_params = {
-            key: float(config["DEFAULT"][key]) if "." in config["DEFAULT"][key] else int(config["DEFAULT"][key])
-            for key in config["DEFAULT"]}
+        algorithm_params = {k: float(v) if "." in v else int(v) for k,v in config["NUMERIC_PARAMS"].items()}
+        if config["STRING_PARAMS"]:
+            algorithm_params = {**algorithm_params, **config["STRING_PARAMS"]}
     model_creator = ModelCreator()
     model_creator.create_model(args.algorithm_name, input_path, algorithm_params, model_path)
 
