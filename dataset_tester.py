@@ -11,11 +11,13 @@ class DatasetTester:
 
     def test_dataset(self, test_path, model_path, output_path, algorithm_name, analyzer_path, task, description=None):
         test = pd.read_csv(test_path, dtype=str)
-        if algorithm_name.lower() in  ['adaboost', 'gausnb', 'decisiontree', 'gradientboost','logregression']:
+        algorithm_name = algorithm_name.lower()
+        if algorithm_name in  ['adaboost', 'gausnb', 'decisiontree', 'gradientboost','logregression', 'linear_sgd']:
             test = self.scikit_test_dataset(test, model_path, output_path)
-        elif algorithm_name.lower() == 'xgboost':
+        elif algorithm_name == 'xgboost':
             test = self.test_xgboost_dataset(test, model_path, output_path)
-
+        else:
+            raise BaseException("Model {}  does not support .\n".format(algorithm_name))
         if task == 'Tester':
             if not description:
                 description = model_path.split('/')[-1]

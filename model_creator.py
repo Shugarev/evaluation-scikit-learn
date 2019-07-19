@@ -5,6 +5,8 @@ from sklearn import tree
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.externals import joblib
+from sklearn import linear_model
+from sklearn.calibration import CalibratedClassifierCV
 import xgboost as xgb
 from dataset_preprocessing import replace_na, get_sample_weight, save_feature_importances,get_xgb_weight
 
@@ -29,7 +31,13 @@ class ModelCreator:
                 model.fit(train, label, sample_weight=weight)
             else:
                 model.fit(train, label)
-            joblib.dump(model, model_path)
+            # TODO калибровка вероятностей  нужна или нет ?
+            if 0:
+                calibrator = CalibratedClassifierCV(model, cv='prefit')
+                calibrator.fit(train, label)
+                joblib.dump(calibrator, model_path)
+            else:
+                joblib.dump(model, model_path)
             if algorithm_name in ['adaboost', 'decisiontree', 'gradientboost']:
                 save_feature_importances(teach, drop_columns, model.feature_importances_,
                                          model_path.split('.')[0] + '-feature.csv')
@@ -43,8 +51,8 @@ class ModelCreator:
         train = train.as_matrix()
         model = self.get_model(params, algorithm_name)
         model.fit(train, label, sample_weight=weight, eval_metric="auc")  #
-        # booster = model.get_booster()
-        booster = model.booster()
+        booster = model.get_booster()
+        # booster = model.booster() # для более ранних версий xgboost-a ( 0.6.a2)
         booster.save_model(model_path)
         save_feature_importances(teach, drop_columns, model.feature_importances_, model_path.split('.')[0] + '-feature.csv')
 
@@ -63,11 +71,13 @@ class ModelCreator:
             return GradientBoostingClassifier(**config)
         elif algorithm_name == 'logregression':
             return LogisticRegression(**config)
+        elif algorithm_name == 'linear_sgd':
+            return linear_model.SGDClassifier(**config)
 
 # TODO подбор параметро для алгоритма
     def find_best_params(self, teach_path, params, model_path, algorithm_name, parameters_range):
         teach = pd.read_csv(teach_path, dtype=str)
-        if algorithm_name in ['adaboost','gradientboost', 'xgboost']:
+        if algorithm_name in ['adaboost','gradientboost', 'xgboost', 'linear_sgd']:
             teach = teach.apply(pd.to_numeric, errors="coerce")
             label = teach.status
             drop_columns = ['status']

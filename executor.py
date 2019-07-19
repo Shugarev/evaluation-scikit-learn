@@ -40,9 +40,9 @@ if args.task not in ['Teacher', 'Tester', 'TesterOrder', 'Selection_parameters']
         "Option 'task' is required. It must be choosen from 'Teacher', 'Tester' or 'TesterOrder'.\n" + message)
 
 if args.task == "Teacher" and args.algorithm_name not in ['adaboost', 'xgboost', 'gausnb', 'decisiontree',
-                                                          'gradientboost', 'logregression']:
+                                                          'gradientboost', 'logregression', 'linear_sgd']:
     raise BaseException(
-        "Option 'task' is required. It must be choosen from 'adaboost', 'xgboost', 'gausnb', 'decisiontree', 'gradientboost', 'logregression'.\n" + message)
+        "Option 'task' is required. It must be choosen from 'adaboost', 'xgboost', 'gausnb', 'decisiontree', 'gradientboost', 'logregression' 'linear_sgd' .\n" + message)
 
 if not args.input:
     raise BaseException("Option 'input' is required.\n" + message)
