@@ -65,20 +65,18 @@ class ModelCreator:
             return LogisticRegression(**config)
 
 # TODO подбор параметро для алгоритма
-    def find_best_params(self, teach_path, params, model_path, algorithm_name):
+    def find_best_params(self, teach_path, params, model_path, algorithm_name, parameters_range):
         teach = pd.read_csv(teach_path, dtype=str)
-        if algorithm_name == 'adaboost':
+        if algorithm_name in ['adaboost','gradientboost', 'xgboost']:
             teach = teach.apply(pd.to_numeric, errors="coerce")
             label = teach.status
             drop_columns = ['status']
             train = teach.drop(drop_columns, axis=1, errors="ignore")
             train = replace_na(train)
             train = train.as_matrix()
-            parameters = {
-                'n_estimators':[60, 50, 80],
-                'learning_rate':[0.7, 0.2, 1.0]
-            }
             model = self.get_model(params, algorithm_name)
-            model = GridSearchCV(model, parameters)
+            model = GridSearchCV(model, parameters_range)
             model = model.fit(train, label)
-            print(sorted(model.cv_results_.keys()))
+            print("Grid search best params:")
+            print(model.best_params_)
+            print()

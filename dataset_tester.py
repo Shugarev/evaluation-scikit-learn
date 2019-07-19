@@ -9,15 +9,16 @@ from xgboost import Booster
 
 class DatasetTester:
 
-    def test_dataset(self, test_path, model_path, output_path, algorithm_name, analyzer_path, type):
+    def test_dataset(self, test_path, model_path, output_path, algorithm_name, analyzer_path, task, description=None):
         test = pd.read_csv(test_path, dtype=str)
         if algorithm_name.lower() in  ['adaboost', 'gausnb', 'decisiontree', 'gradientboost','logregression']:
             test = self.scikit_test_dataset(test, model_path, output_path)
         elif algorithm_name.lower() == 'xgboost':
             test = self.test_xgboost_dataset(test, model_path, output_path)
 
-        if type == 'Tester':
-            description = model_path.split('/')[-1]
+        if task == 'Tester':
+            if not description:
+                description = model_path.split('/')[-1]
             df_statistic = get_df_prediction(test, description=description)
             df_statistic.to_csv(analyzer_path, index=False)
 
@@ -61,4 +62,4 @@ class DatasetTester:
         print("Order probability = ", test.probability.values[0])
         if self.threshold:
             prediction_status = 1 if test.probability.values[0] >= float(self.threshold) else 0
-            print("Prediction status = ", prediction_status)
+            print("Prediction status = ", prediction_status, '\n')
