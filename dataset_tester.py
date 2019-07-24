@@ -11,10 +11,12 @@ from dataset_preprocessing import replace_na
 
 class DatasetTester:
 
-    def run(self, task, test_path, algorithm_name, model_path, output_path, analyzer_path, description=None):
+    def run(self, task: str, test_path: str, algorithm_name: str, model_path: str, output_path: str, analyzer_path: str,
+            description:str=None):
         test = pd.read_csv(test_path, dtype=str)
         algorithm_name = algorithm_name.lower()
-        if algorithm_name in ['adaboost', 'gausnb', 'decisiontree', 'gradientboost', 'logregression', 'linear_sgd', 'xgboost']:
+        if algorithm_name in ['adaboost', 'gausnb', 'decisiontree', 'gradientboost', 'logregression', 'linear_sgd',
+                              'xgboost']:
             test = self.test_dataset(test, algorithm_name, model_path, output_path)
         else:
             raise BaseException("Model {}  does not support .\n".format(algorithm_name))
@@ -33,7 +35,7 @@ class DatasetTester:
         else:
             self.show_single_order_info(test)
 
-    def get_model(self, algorithm_name, model_path):
+    def get_model(self, algorithm_name: str, model_path: str):
         if algorithm_name == 'xgboost':
             model = xgb.XGBClassifier()
             booster = Booster()
@@ -43,7 +45,7 @@ class DatasetTester:
             model = joblib.load(model_path)
         return model
 
-    def test_dataset(self, test, algorithm_name, model_path, output_path):
+    def test_dataset(self, test: pd.DataFrame, algorithm_name: str, model_path: str, output_path: str) -> pd.DataFrame:
         test = test.copy()
         test_modified = test.apply(pd.to_numeric, errors="coerce")
         drop_columns = ['status']
@@ -57,10 +59,10 @@ class DatasetTester:
         test.to_csv(output_path, index=False, quoting=1)
         return test
 
-    def set_threshold(self, threshold):
+    def set_threshold(self, threshold: float):
         self.threshold = threshold
 
-    def show_single_order_info(self, test):
+    def show_single_order_info(self, test: pd.DataFrame):
         print("Order probability = ", test.probability.values[0])
         if self.threshold:
             prediction_status = 1 if test.probability.values[0] >= float(self.threshold) else 0

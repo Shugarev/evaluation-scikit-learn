@@ -1,7 +1,9 @@
 import pandas as pd
+
 from settings import Params
 
-def get_empty_prediction_df(metric):
+
+def get_empty_prediction_df(metric: str) -> pd.DataFrame:
     result_df = pd.DataFrame(
         columns=['description', 'p_1', 'p_2', 'p_3', 'p_5'
             , 'p_6', 'p_10', 'p_20', 'p_50'
@@ -19,7 +21,7 @@ def get_empty_prediction_df(metric):
     return result_df
 
 
-def get_df_prediction(Test_1, result_df=None, metric="count", description='teach - test'):
+def get_df_prediction(Test_1: pd.DataFrame, result_df=None, metric="count", description='teach - test') -> pd.DataFrame:
     if type(result_df).__name__ != 'DataFrame':
         result_df = get_empty_prediction_df(metric)
 
@@ -48,7 +50,7 @@ def get_df_prediction(Test_1, result_df=None, metric="count", description='teach
             d = int(col.split('_')[1])
             if metric == "amount":
                 dt = test[test.cum_amount < d * test_amount / 100]
-                dt_cb_amount = sum(dt[dt.status.isin(Params.BAD_STATUSES) ].amount)
+                dt_cb_amount = sum(dt[dt.status.isin(Params.BAD_STATUSES)].amount)
                 row[col] = str(round(100 * dt_cb_amount / cb_test_amount, 2))
                 n = dt.shape[0]
             else:

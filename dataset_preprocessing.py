@@ -4,11 +4,11 @@ import pandas as pd
 from settings import Params
 
 
-def replace_na(dataset, replace_val=-9999):
+def replace_na(dataset: pd.DataFrame, replace_val=-9999) -> pd.DataFrame:
     return dataset.fillna(replace_val)
 
 
-def get_sample_weight(dataset):
+def get_sample_weight(dataset: pd.DataFrame) -> pd.Series:
     n_sample = dataset.shape[0]
     n_bad = dataset[dataset.status.isin(Params.BAD_STATUSES)].shape[0]
     weight_bad = min(int(n_sample / n_bad), 99)
@@ -17,7 +17,7 @@ def get_sample_weight(dataset):
     return sample_weight
 
 
-def get_xgb_weight(dataset):
+def get_xgb_weight(dataset: pd.DataFrame) -> pd.Series:
     n_sample = dataset.shape[0]
     n_bad = dataset[dataset.status.isin(Params.BAD_STATUSES)].shape[0]
     w = int(n_sample / n_bad)
@@ -25,7 +25,7 @@ def get_xgb_weight(dataset):
     return weight
 
 
-def save_feature_importances(teach, drop_columns, feature_importances, feature_path):
+def save_feature_importances(teach: pd.DataFrame, drop_columns: list, feature_importances: list, feature_path: str):
     importances = pd.DataFrame({"feature_name": teach.drop(drop_columns, axis=1, errors="ignore").columns,
                                 "importances": feature_importances})
     importances.sort_values(by=["importances"], ascending=False, inplace=True)

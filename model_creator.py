@@ -1,24 +1,27 @@
+from typing import Dict
+
 import pandas as pd
-from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier
-from sklearn.naive_bayes import GaussianNB
+import xgboost as xgb
+from sklearn import linear_model
 from sklearn import tree
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier
+from sklearn.externals import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
-from sklearn.externals import joblib
-from sklearn import linear_model
-from sklearn.calibration import CalibratedClassifierCV
-import xgboost as xgb
-from dataset_preprocessing import replace_na, get_sample_weight, save_feature_importances,get_xgb_weight
+from sklearn.naive_bayes import GaussianNB
+
+from dataset_preprocessing import replace_na, get_sample_weight, save_feature_importances, get_xgb_weight
 
 
 class ModelCreator:
-    def run(self, teach_path, algorithm_name, params, model_path):
+    def run(self, teach_path: str, algorithm_name: str, params: Dict, model_path: str):
         model, teach, drop_columns = self.create_model(teach_path, algorithm_name, params, model_path)
-        if algorithm_name in ['adaboost', 'decisiontree', 'gradientboost', 'xgboost' ]:
+        if algorithm_name in ['adaboost', 'decisiontree', 'gradientboost', 'xgboost']:
             save_feature_importances(teach, drop_columns, model.feature_importances_,
                                      model_path.split('.')[0] + '-feature.csv')
 
-    def create_model(self, teach_path, algorithm_name, params, model_path):
+    def create_model(self, teach_path: str, algorithm_name: str, params: Dict, model_path: str):
         teach = pd.read_csv(teach_path, dtype=str)
         teach = teach.apply(pd.to_numeric, errors="coerce")
         label = teach.status
@@ -48,8 +51,7 @@ class ModelCreator:
                 joblib.dump(model, model_path)
         return model, teach, drop_columns
 
-
-    def get_model(self, config, algorithm_name):
+    def get_model(self, config: Dict, algorithm_name: str):
         if not config:
             config = {}
         if algorithm_name == 'adaboost':
@@ -58,7 +60,7 @@ class ModelCreator:
             return xgb.XGBClassifier(**config)
         elif algorithm_name == 'gausnb':
             return GaussianNB()
-        elif algorithm_name == 'decisiontree':                      # do not calculate probabilities
+        elif algorithm_name == 'decisiontree':  # do not calculate probabilities
             return tree.DecisionTreeClassifier()
         elif algorithm_name == 'gradientboost':
             return GradientBoostingClassifier(**config)
@@ -67,10 +69,10 @@ class ModelCreator:
         elif algorithm_name == 'linear_sgd':
             return linear_model.SGDClassifier(**config)
 
-# TODO подбор параметро для алгоритма
-    def find_best_params(self, teach_path, params, algorithm_name, parameters_range):
+    # TODO подбор параметро для алгоритма
+    def find_best_params(self, teach_path: str, params: Dict, algorithm_name: Dict, parameters_range: Dict):
         teach = pd.read_csv(teach_path, dtype=str)
-        if algorithm_name in ['adaboost','gradientboost', 'xgboost', 'linear_sgd']:
+        if algorithm_name in ['adaboost', 'gradientboost', 'xgboost', 'linear_sgd']:
             teach = teach.apply(pd.to_numeric, errors="coerce")
             label = teach.status
             drop_columns = ['status']
