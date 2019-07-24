@@ -18,6 +18,7 @@ class Params:
     ALGORITHM_PARAMS = {}
     PARAMS_RANGE = {}
     CONFIG_PATH = None
+    BAD_STATUSES = ('true', 1, '1')
     MESSAGE = """ Required format
     python executor.py  --task Teacher --input db_teach.csv --algorithm_name adaboost --model_name ada_model --algorithm_config config-adaboost.ini
     python executor.py  --task Tester  --input db_test.csv  --algorithm_name adaboost --model_name ada_model --output Test-result-adaboost.csv

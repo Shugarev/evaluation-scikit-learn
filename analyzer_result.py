@@ -1,4 +1,5 @@
 import pandas as pd
+from settings import Params
 
 def get_empty_prediction_df(metric):
     result_df = pd.DataFrame(
@@ -23,7 +24,7 @@ def get_df_prediction(Test_1, result_df=None, metric="count", description='teach
         result_df = get_empty_prediction_df(metric)
 
     test = Test_1.copy()
-    All_cb_in_test = test[test['status'].isin(['true',1])].shape[0]
+    All_cb_in_test = test[test['status'].isin(Params.BAD_STATUSES)].shape[0]
     All_row_in_test = test.shape[0]
 
     test["probability"] = pd.to_numeric(test.probability, errors="coerce")
@@ -35,7 +36,7 @@ def get_df_prediction(Test_1, result_df=None, metric="count", description='teach
     if metric == "amount":
         test["amount"] = pd.to_numeric(test.amount, errors="coerce")
         test_amount = round(sum(test.amount), 2)
-        cb_test_amount = round(sum(test[test['status'].isin(['true',1])].amount), 2)
+        cb_test_amount = round(sum(test[test['status'].isin(Params.BAD_STATUSES)].amount), 2)
         row['cb_test_amount'] = cb_test_amount
         row['test_amount'] = test_amount
         test["cum_amount"] = test.amount.cumsum()
@@ -47,13 +48,13 @@ def get_df_prediction(Test_1, result_df=None, metric="count", description='teach
             d = int(col.split('_')[1])
             if metric == "amount":
                 dt = test[test.cum_amount < d * test_amount / 100]
-                dt_cb_amount = sum(dt[dt.status.isin(['true',1]) ].amount)
+                dt_cb_amount = sum(dt[dt.status.isin(Params.BAD_STATUSES) ].amount)
                 row[col] = str(round(100 * dt_cb_amount / cb_test_amount, 2))
                 n = dt.shape[0]
             else:
                 n = round(All_row_in_test * d / 100)
                 dt_p = test.iloc[:n, :]
-                n_cb = dt_p[dt_p.status.isin(['true',1])].shape[0]
+                n_cb = dt_p[dt_p.status.isin(Params.BAD_STATUSES)].shape[0]
                 row[col] = str(round(100 * n_cb / All_cb_in_test, 2))
             row_threshold[col] = str(round(test.probability.values[n - 1], 6))
 

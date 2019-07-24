@@ -24,20 +24,19 @@ class ParserArgs:
 
     def check_required_arguments(self):
         args = self.args
-        if args.task not in  Params.TASKS:
-            raise IndexError(
-                "Option 'task' is required. It is enum type {}. \n".format(str(Params.TASKS)) + Params.MESSAGE)
+        if args.task not in Params.TASKS:
+            raise AttributeError(
+                "Option 'task' is required. It is enum type {}. \n" . format(str(Params.TASKS)) + Params.MESSAGE)
         if not args.input:
-            raise IndexError("Option 'input' is required.\n" + Params.MESSAGE)
+            raise AttributeError("Option 'input' is required.\n" + Params.MESSAGE)
         if not args.model_name:
-            raise IndexError("Option 'model_name' is required.\n" + Params.MESSAGE)
-
+            raise AttributeError("Option 'model_name' is required.\n" + Params.MESSAGE)
         if args.task == "Teacher" and args.algorithm_name not in Params.ALGORITHMS:
-            raise IndexError(
-                "Option 'algorithm_name' is enum type {} .\n".format(str( Params.ALGORITHMS)) + Params.MESSAGE)
+            raise AttributeError(
+                "Option 'algorithm_name' is enum type {} .\n".format(str(Params.ALGORITHMS)) + Params.MESSAGE)
         if args.task in ['Tester', 'TesterOrder']:
             if not args.output:
-                raise BaseException("Option 'output' for Tester is requared.\n" + Params.MESSAGE)
+                raise AttributeError("Option 'output' for Tester is requared.\n" + Params.MESSAGE)
 
     def parse_args_from_comand_line(self):
         self.check_required_arguments()
@@ -85,18 +84,18 @@ class ParserArgs:
         if Params.TASK == 'Selection_parameters':
             Params.PARAMS_RANGE = self.get_params_range(config)
 
-    @staticmethod
-    def get_combinations(options):
-        """
-        :param options:
-            {
-                n_estimators = [50, 60, 80, 100, 120]
-                learning_rate = [0.2, 0.5, 0.7, 1.0]
-                random_state = [123]
-            }
-        :return: [{'n_estimators': 50,'learning_rate':0.2,'random_state':123}, {...},...,{...}]
-        """
-        keys = options.keys()
-        values = (options[key] for key in keys)
-        combinations = [dict(zip(keys, combination)) for combination in product(*values)]
-        return combinations
+
+def get_combinations(options):
+    """
+    :param options:
+        {
+            n_estimators = [50, 60, 80, 100, 120]
+            learning_rate = [0.2, 0.5, 0.7, 1.0]
+            random_state = [123]
+        }
+    :return: [{'n_estimators': 50,'learning_rate':0.2,'random_state':123}, {...},...,{...}]
+    """
+    keys = options.keys()
+    values = (options[key] for key in keys)
+    combinations = [dict(zip(keys, combination)) for combination in product(*values)]
+    return combinations
