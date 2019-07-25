@@ -20,7 +20,7 @@ python executor.py --task TesterOrder  --input db_test1c.csv  --algorithm_name g
 python executor.py --task Teacher --input db_teach.csv --algorithm_name decisiontree --model_name decisiontree_model
 printf "decisiontree_model done \n \n"
 python executor.py --task Tester --input db_test.csv --algorithm_name decisiontree --model_name decisiontree_model --output Test-result-decisiontree.csv
- #python executor.py --task TesterOrder  --input db_test1b.csv  --algorithm_name decisiontree --model_name decisiontree_model --threshold 0.77991
+#python executor.py --task TesterOrder  --input db_test1b.csv  --algorithm_name decisiontree --model_name decisiontree_model --threshold 0.77991
 
 python executor.py --task Teacher --input db_teach.csv --algorithm_name logregression --model_name logregression_model
 printf "logregression_model done \n"
@@ -28,10 +28,13 @@ python executor.py --task Tester --input db_test.csv --algorithm_name logregress
 python executor.py --task TesterOrder  --input db_test1c.csv  --algorithm_name logregression --model_name logregression_model --threshold 0.166869 --output Test-result-logregression.csv
 
 
-python executor.py --task Teacher --input db_teach.csv --algorithm_name gausnb --model_name gausnb_model
+python executor.py --task Encode_teach --input db_teach-bayes.csv --encode_config config-bayes-encode.ini  --encoded_path encoded_bayes
+python executor.py --task Encode_test  --input db_test-bayes.csv  --encode_config config-bayes-encode.ini  --encoded_path encoded_bayes
+
+python executor.py --task Teacher --input db_teach-bayes-encoded.csv --algorithm_name gausnb --model_name gausnb_model
 printf "gausnb_model done \n"
-python executor.py --task Tester --input db_test.csv --algorithm_name gausnb --model_name gausnb_model --output Test-result-gausnb.csv
-python executor.py --task TesterOrder  --input db_test1c.csv  --algorithm_name gausnb --model_name gausnb_model --threshold 0.28838  --output Test-result-gausnb-1.csv
+python executor.py --task Tester --input db_test-bayes-encoded.csv --algorithm_name gausnb --model_name gausnb_model --output Test-result-gausnb.csv
+#python executor.py --task TesterOrder  --input db_test1c.csv  --algorithm_name gausnb --model_name gausnb_model --threshold 0.28838  --output Test-result-gausnb-1.csv
 
 
 

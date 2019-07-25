@@ -2,7 +2,7 @@
 import warnings
 
 
-def warn(*args, **kwargs):
+def warn( *args, **kwargs ):
     pass
 
 
@@ -12,6 +12,7 @@ from model_creator import ModelCreator
 from settings import Params
 from utils import ParserArgs
 from utils import get_combinations
+from dataset_preprocessing import Encoder
 
 if __name__ == '__main__':
     parser = ParserArgs()
@@ -27,7 +28,6 @@ if __name__ == '__main__':
         dataset_tester.run(Params.TASK, Params.INPUT_PATH, Params.ALGORITHM, Params.MODEL_PATH,
                            Params.OUTPUT_PATH, Params.ANALYZER_PATH)
 
-    # TODO подбор параметров для алгоритма
     if Params.TASK == 'Selection_parameters':
         combinations = get_combinations(Params.PARAMS_RANGE)
         model_creator = ModelCreator()
@@ -41,3 +41,7 @@ if __name__ == '__main__':
             description = Params.MODEL_PATH.split('/')[-1] + str(algorithm_params)
             dataset_tester.run(task, Params.INPUT_PATH_2, Params.ALGORITHM, Params.MODEL_PATH,
                                Params.OUTPUT_PATH, Params.ANALYZER_PATH, description=description)
+
+    if Params.TASK in ['Encode_teach', 'Encode_test']:
+        encoder = Encoder()
+        encoder.run(Params.TASK, Params.INPUT_PATH, Params.ENCODE_PARAMS, Params.ENCODED_PATH)
