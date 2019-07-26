@@ -39,3 +39,10 @@ class Params:
         'Encode_teach': ['encode_config', 'encoded_path'],
         'Encode_test': ['encode_config', 'encoded_path']
     }
+
+    @staticmethod
+    def get_all_args():
+        all_args = []
+        for v in Params.REQUIRED_ARGS:
+            all_args += v
+        return set(all_args)
