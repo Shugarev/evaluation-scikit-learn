@@ -58,7 +58,7 @@ def encode_test( test_path: str, encode_path: str, skip_columns: list = ['status
 
 def encode_dataset( dataset_path: str, dataset: pd.DataFrame, enc: list, skip_columns: list,
                     dataset_original: pd.DataFrame ):
-    dataset_encode_path = '.'.join(dataset_path.split('.')[0:-1]) + '-encoded.csv'
+    dataset_encode_path = dataset_path.rsplit('.', maxsplit=1)[0] + '-encoded.csv'
     dataset_encoded = enc.transform(dataset)
     dataset_encoded = pd.DataFrame(dataset_encoded)
     dataset_encoded = pd.concat([dataset_encoded, dataset_original[skip_columns]], axis=1)

@@ -25,7 +25,7 @@ class DatasetTester:
                 description = model_path.split('/')[-1]
             df_statistic = get_df_prediction(test, description=description)
             df_statistic.to_csv(analyzer_path, index=False)
-            compare_path = '/'.join(output_path.split('/')[:-1]) + "/compare-reslults.csv"
+            compare_path = output_path.rsplit('/', maxsplit=1)[0] + "/compare-reslults.csv"
             if os.path.exists(compare_path):
                 df_comapare = pd.read_csv(compare_path)
                 df_comapare = pd.concat([df_comapare, df_statistic], ignore_index=False)

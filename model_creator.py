@@ -19,7 +19,7 @@ class ModelCreator:
         model, teach, drop_columns = self.create_model(teach_path, algorithm_name, params, model_path)
         if algorithm_name in ['adaboost', 'decisiontree', 'gradientboost', 'xgboost']:
             save_feature_importances(teach, drop_columns, model.feature_importances_,
-                                     model_path.split('.')[0] + '-feature.csv')
+                                     model_path.rsplit('.', maxsplit=1)[0] + '-feature.csv')
 
     def create_model(self, teach_path: str, algorithm_name: str, params: Dict, model_path: str):
         teach = pd.read_csv(teach_path, dtype=str)

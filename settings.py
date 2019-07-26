@@ -43,6 +43,6 @@ class Params:
     @staticmethod
     def get_all_args():
         all_args = []
-        for v in Params.REQUIRED_ARGS:
+        for v in list(Params.REQUIRED_ARGS.values()):
             all_args += v
-        return set(all_args)
+        return ( '--' + v for v in set(all_args))
