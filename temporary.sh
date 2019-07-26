@@ -38,7 +38,7 @@ python executor.py --task Tester --input db_test-bayes-encoded.csv --algorithm_n
 
 
 
-#python executor.py  --task Selection_parameters --input db_teach.csv --algorithm_name adaboost --model_name ada_model --algorithm_config config-adaboost.ini --output Test-result-adabust.csv --input2 db_test.csv
+python executor.py  --task Selection_parameters --input db_teach.csv --algorithm_name adaboost --model_name ada_model --algorithm_config config-adaboost.ini --output Test-result-adabust.csv --input2 db_test.csv
 #python executor.py  --task Selection_parameters --input db_teach.csv --algorithm_name gradientboost --model_name gradientboost_model --algorithm_config config-gradientboost.ini --output Test-result-gradientboost.csv --input2 db_test.csv
 #python executor.py  --task Selection_parameters --input db_teach.csv --algorithm_name xgboost --model_name xgboost_model --algorithm_config config-xgboost.ini --output Test-result-xgboost.csv --input2 db_test.csv
 #

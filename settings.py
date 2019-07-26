@@ -30,3 +30,12 @@ class Params:
     python executor.py --task TesterOrder  --input db_test1b.csv  --algorithm_name adaboost --model_name ada_model --threshold 0.50813 --output Test-result-adaboost-1.csv
     python executor.py --task Selection_parameters --input db_teach.csv --algorithm_name adaboost --model_name ada_model --algorithm_config config-adaboost.ini --output Test-result-adabust.csv --input2 db_test.csv
     """
+    REQUIRED_ARGS = {
+        'Default': ['task', 'input'],
+        'Teacher': ['algorithm_name', 'model_name'],
+        'Tester': ['algorithm_name', 'model_name', 'output'],
+        'TesterOrder': ['algorithm_name', 'model_name', 'output', 'threshold'],
+        'Selection_parameters': ['algorithm_name', 'model_name', 'algorithm_config', 'input2', 'output'],
+        'Encode_teach': ['encode_config', 'encoded_path'],
+        'Encode_test': ['encode_config', 'encoded_path']
+    }
