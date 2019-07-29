@@ -16,7 +16,11 @@ tester_args = ['--task', 'Tester', '--input', 'db_test.csv', '--algorithm_name',
 tester_order_args = ['--task', 'TesterOrder', '--input', 'db_test1c.csv', '--algorithm_name', 'adaboost'
             , '--model_name', 'ada_model', '--threshold', '0.505484', '--output', 'Test-result-adaboost-1.csv']
 
+encode_teach_args  = ['--task', 'Encode_teach', '--input', 'db_teach-bayes.csv', '--encode_config'
+    , 'config-bayes-encode.ini', '--encoded_path', 'encoded_bayes']
 
+encode_test_args = ['--task', 'Encode_test', '--input', 'db_test-bayes.csv', '--encode_config'
+    , 'config-bayes-encode.ini', '--encoded_path', 'encoded_bayes']
 class TestAlgorithmsParams(unittest.TestCase):
 
 
@@ -62,6 +66,30 @@ class TestAlgorithmsParams(unittest.TestCase):
                          , message.format('OUTPUT_PATH'))
 
         self.assertEqual('{:.6f}'.format(float(Params.THRESHOLD)), '{:.6f}'.format(0.505484), message.format('THRESHOLD'))
+        sys.argv = copy_argv
+
+    def test_params_bayes_task_encode_teach(self):
+        copy_argv = sys.argv.copy()
+        sys.argv[1:] = encode_teach_args
+        ParserArgs()
+        message = 'Param {} is incorrect.'
+        self.assertEqual(Params.TASK, 'Encode_teach', message.format('TASK'))
+        self.assertEqual(Params.INPUT_PATH, Params.BASE_DIR + '/datasets/db_teach-bayes.csv', message.format('INPUT_PATH'))
+        self.assertEqual(Params.ENCODED_PATH, Params.BASE_DIR +  '/configs/encoded_bayes', message.format('ENCODED_PATH'))
+        self.assertEqual(Params.ENCODE_CONFIG_PATH, Params.BASE_DIR + '/configs/config-bayes-encode.ini', message.format('ENCODE_CONFIG_PATH'))
+        self.assertDictEqual(Params.ENCODE_PARAMS,  {'skip_columns': ['status', 'bin', 'amount_deviation', 'client_hour', 'day_of_week']}, message.format('ENCODE_PARAMS'))
+        sys.argv = copy_argv
+
+    def test_params_bayes_task_encode_test(self):
+        copy_argv = sys.argv.copy()
+        sys.argv[1:] = encode_test_args
+        ParserArgs()
+        message = 'Param {} is incorrect.'
+        self.assertEqual(Params.TASK, 'Encode_test', message.format('TASK'))
+        self.assertEqual(Params.INPUT_PATH, Params.BASE_DIR + '/datasets/db_test-bayes.csv', message.format('INPUT_PATH'))
+        self.assertEqual(Params.ENCODED_PATH, Params.BASE_DIR +  '/configs/encoded_bayes', message.format('ENCODED_PATH'))
+        self.assertEqual(Params.ENCODE_CONFIG_PATH, Params.BASE_DIR + '/configs/config-bayes-encode.ini', message.format('ENCODE_CONFIG_PATH'))
+        self.assertDictEqual(Params.ENCODE_PARAMS,  {'skip_columns': ['status', 'bin', 'amount_deviation', 'client_hour', 'day_of_week']}, message.format('ENCODE_PARAMS'))
         sys.argv = copy_argv
 
 
