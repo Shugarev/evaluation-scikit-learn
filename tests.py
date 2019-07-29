@@ -6,6 +6,7 @@ from dataset_tester import DatasetTester
 from model_creator import ModelCreator
 from settings import Params
 from utils import ParserArgs
+from dataset_preprocessing import Encoder
 
 teacher_args = ['--task', 'Teacher', '--input', 'db_teach.csv', '--algorithm_name'
     , 'adaboost', '--model_name', 'ada_model', '--algorithm_config', 'config-adaboost.ini']
@@ -123,6 +124,32 @@ class TestAlgorithmsresult(unittest.TestCase):
         df = pd.read_csv(Params.BASE_DIR  + '/results/Test-result-adaboost-1.csv', dtype=str).to_dict()
         df_expected = pd.read_csv(Params.BASE_DIR + '/data_for_tests/Test-result-adaboost-1.csv', dtype=str).to_dict()
         self.assertDictEqual(df, df_expected, 'Test one order is correct')
+        sys.argv = copy_argv
+
+class Test_Encoder(unittest.TestCase):
+
+    def test_encode_teach_test(self):
+        copy_argv = sys.argv.copy()
+        sys.argv[1:] = encode_teach_args
+        ParserArgs()
+        encoder = Encoder()
+        encoder.run(Params.TASK, Params.INPUT_PATH, Params.ENCODE_PARAMS, Params.ENCODED_PATH)
+        sys.argv[1:] = encode_test_args
+        ParserArgs()
+        encoder = Encoder()
+        encoder.run(Params.TASK, Params.INPUT_PATH, Params.ENCODE_PARAMS, Params.ENCODED_PATH)
+
+        df = pd.read_csv(Params.BASE_DIR + '/datasets/db_teach-bayes-encoded.csv', dtype=str).to_dict()
+        df_expected = pd.read_csv(Params.BASE_DIR + '/data_for_tests/db_teach-bayes-encoded.csv',
+                                  dtype=str).to_dict()
+        self.assertDictEqual(df, df_expected, 'Teach is encoded incorrect')
+
+        df = pd.read_csv(Params.BASE_DIR + '/datasets/db_test-bayes-encoded.csv', dtype=str).to_dict()
+        df_expected = pd.read_csv(Params.BASE_DIR + '/data_for_tests/db_test-bayes-encoded.csv',
+                                  dtype=str).to_dict()
+        self.assertDictEqual(df, df_expected, 'Teach is encoded incorrect')
+        sys.argv = copy_argv
+
 
 if __name__ == '__main__':
     unittest.main()
