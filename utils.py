@@ -9,7 +9,7 @@ from settings import Params
 
 class ParserArgs:
 
-    def __init__(self, argv: Dict = None):
+    def __init__(self, argv: List = None):
         self.argv = argv or sys.argv
         p = argparse.ArgumentParser()
         for arg in Params.get_all_args():
