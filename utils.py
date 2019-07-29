@@ -39,7 +39,7 @@ class ParserArgs:
         Params.ANALYZER_PATH = Params.OUTPUT_PATH.rsplit('.', maxsplit=1)[0] + "-analyzer.csv" if args.output else None
 
         Params.INPUT_PATH_2 = Params.BASE_DIR + '/datasets/' + args.input2 if args.input2 else None
-        Params.THRESHOLD = args.threshold if args.threshold else None
+        Params.THRESHOLD = float(args.threshold) if args.threshold else None
 
 
     def _check_required_arguments(self):
