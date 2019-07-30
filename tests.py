@@ -3,9 +3,9 @@ import unittest
 
 import pandas as pd
 
-from dataset_preprocessing import Encoder
-from dataset_tester import DatasetTester
-from model_creator import ModelCreator
+from dataset_preprocessing import encoder
+from dataset_tester import datasetTester
+from model_creator import modelCreator
 from settings import Params
 from utils import ParserArgs
 
@@ -114,20 +114,17 @@ class TestAlgorithmsresult(unittest.TestCase):
     def test_ada_result(self):
         sys.argv[1:] = teacher_args
         ParserArgs()
-        model_creator = ModelCreator()
-        model_creator.run(Params.INPUT_PATH, Params.ALGORITHM, Params.ALGORITHM_PARAMS, Params.MODEL_PATH)
+        modelCreator.run(Params.INPUT_PATH, Params.ALGORITHM, Params.ALGORITHM_PARAMS, Params.MODEL_PATH)
 
         sys.argv[1:] = tester_args
         ParserArgs()
-        dataset_tester = DatasetTester()
-        dataset_tester.run(Params.TASK, Params.INPUT_PATH, Params.ALGORITHM, Params.MODEL_PATH,
+        datasetTester.run(Params.TASK, Params.INPUT_PATH, Params.ALGORITHM, Params.MODEL_PATH,
                            Params.OUTPUT_PATH, Params.ANALYZER_PATH)
 
         sys.argv[1:] = tester_order_args
         ParserArgs()
-        dataset_tester = DatasetTester()
-        dataset_tester.set_threshold(Params.THRESHOLD)
-        dataset_tester.run(Params.TASK, Params.INPUT_PATH, Params.ALGORITHM, Params.MODEL_PATH,
+        datasetTester.set_threshold(Params.THRESHOLD)
+        datasetTester.run(Params.TASK, Params.INPUT_PATH, Params.ALGORITHM, Params.MODEL_PATH,
                            Params.OUTPUT_PATH, Params.ANALYZER_PATH)
 
         df = pd.read_csv(Params.BASE_DIR + '/results/Test-result-adaboost-analyzer.csv', dtype=str).to_dict()
@@ -138,6 +135,10 @@ class TestAlgorithmsresult(unittest.TestCase):
         df = pd.read_csv(Params.BASE_DIR + '/results/Test-result-adaboost-1.csv', dtype=str).to_dict()
         df_expected = pd.read_csv(Params.BASE_DIR + '/data_for_tests/Test-result-adaboost-1.csv', dtype=str).to_dict()
         self.assertDictEqual(df, df_expected, 'Test one order is correct')
+
+        df = pd.read_csv(Params.BASE_DIR + '/models/ada_model-feature.csv', dtype=str).to_dict()
+        df_expected = pd.read_csv(Params.BASE_DIR + '/data_for_tests/ada_model-feature.csv', dtype=str).to_dict()
+        self.assertDictEqual(df, df_expected, 'Feature is incorrect.')
 
 
 class Test_Encoder(unittest.TestCase):
@@ -151,11 +152,9 @@ class Test_Encoder(unittest.TestCase):
     def test_encode_teach_test(self):
         sys.argv[1:] = encode_teach_args
         ParserArgs()
-        encoder = Encoder()
         encoder.run(Params.TASK, Params.INPUT_PATH, Params.ENCODE_PARAMS, Params.ENCODED_PATH)
         sys.argv[1:] = encode_test_args
         ParserArgs()
-        encoder = Encoder()
         encoder.run(Params.TASK, Params.INPUT_PATH, Params.ENCODE_PARAMS, Params.ENCODED_PATH)
 
         df = pd.read_csv(Params.BASE_DIR + '/datasets/db_teach-bayes-encoded.csv', dtype=str).to_dict()
